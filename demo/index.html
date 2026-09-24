@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TomLabs Consent demo</title>
+  <link rel="icon" href="../icon.png">
+  <style>
+    :root { color-scheme: light dark; --bg: #f5f5f7; --fg: #16171d; --muted: #5b5e6b; --card: #fff; --line: rgba(0,0,0,.09); }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #0b0c10; --fg: #e6e7eb; --muted: #9a9ca6; --card: #111218; --line: rgba(255,255,255,.08); } }
+    :root[data-theme="dark"] { --bg: #0b0c10; --fg: #e6e7eb; --muted: #9a9ca6; --card: #111218; --line: rgba(255,255,255,.08); }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 32px 16px 200px; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    .muted { color: var(--muted); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin: 16px 0; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; }
+    button, select { min-height: 40px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: inherit; font: inherit; cursor: pointer; }
+    code, pre { font-family: "Cascadia Mono", Consolas, monospace; font-size: 13px; }
+    pre { overflow-x: auto; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+    footer { margin-top: 32px; border-top: 1px solid var(--line); padding-top: 12px; }
+    footer a { color: inherit; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>TomLabs Consent</h1>
+    <p class="muted">Demo of <code>tomlabs-consent.js</code> <span id="version"></span>. The demo uses a fake measurement ID; accepting appends the gtag.js tag, which Google answers for any ID.</p>
+
+    <div class="card">
+      <div class="row">
+        <label>Theme
+          <select id="theme">
+            <option value="">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <button type="button" data-tomlabs-consent>Cookies</button>
+        <button type="button" id="reset">Reset choice</button>
+      </div>
+      <p>Stored choice: <code id="state"></code></p>
+      <p>gtag.js loaded: <code id="tag"></code></p>
+    </div>
+
+    <h2>Usage</h2>
+<pre>&lt;script src="/tomlabs-consent.js"
+        data-ga-id="G-XXXXXXXXXX"
+        data-privacy-url="https://example.com/privacy"
+        data-lang="cs" defer&gt;&lt;/script&gt;
+
+&lt;a href="#" data-tomlabs-consent&gt;Cookies&lt;/a&gt;</pre>
+
+    <footer class="muted"><a href="#" data-tomlabs-consent>Cookies</a></footer>
+  </main>
+
+  <script src="../tomlabs-consent.js" data-ga-id="G-DEMO000000" data-privacy-url="#privacy"></script>
+  <script>
+    const theme = document.getElementById('theme');
+    try { theme.value = localStorage.getItem('demo.theme') || ''; } catch (e) {}
+    const applyTheme = () => {
+      if (theme.value) document.documentElement.setAttribute('data-theme', theme.value);
+      else document.documentElement.removeAttribute('data-theme');
+      try { localStorage.setItem('demo.theme', theme.value); } catch (e) {}
+    };
+    theme.addEventListener('change', applyTheme);
+    applyTheme();
+
+    const render = () => {
+      document.getElementById('version').textContent = 'v' + tomlabsConsent.version;
+      document.getElementById('state').textContent = tomlabsConsent.get() || 'none';
+      document.getElementById('tag').textContent = !!document.querySelector('script[src*="googletagmanager"]');
+    };
+    document.addEventListener('tomlabs-consent', render);
+    document.getElementById('reset').addEventListener('click', () => { tomlabsConsent.reset(); location.reload(); });
+    render();
+  </script>
+</body>
+</html>
