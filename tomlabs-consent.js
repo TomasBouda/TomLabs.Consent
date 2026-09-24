@@ -1,4 +1,4 @@
-/*! tomlabs-consent v1.0.0 | MIT | https://github.com/TomasBouda/TomLabs.Consent */
+/*! tomlabs-consent v1.0.1 | MIT | https://github.com/TomasBouda/TomLabs.Consent */
 /*
  * Cookie consent banner + Google Analytics 4 loader (Consent Mode v2, basic mode).
  *
@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var VERSION = '1.0.0';
+  var VERSION = '1.0.1';
   // Bump when the consent text or purpose changes: every visitor is asked again.
   var POLICY_VERSION = 1;
   var STORAGE_KEY = 'tomlabs.consent.v1';
@@ -172,13 +172,27 @@
   }
 
   function build() {
+    var sheet = null;
     host = document.createElement('div');
     host.setAttribute('data-tomlabs-consent-host', '');
     root = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
 
-    var style = document.createElement('style');
-    style.textContent = CSS;
-    root.appendChild(style);
+    // A constructed stylesheet is not subject to CSP style-src, so the banner is styled even on sites
+    // with a strict policy (style-src 'self'). A <style> element is the fallback for old browsers.
+    if (root !== host && 'adoptedStyleSheets' in root && typeof CSSStyleSheet === 'function') {
+      try {
+        sheet = new CSSStyleSheet();
+        sheet.replaceSync(CSS);
+        root.adoptedStyleSheets = [sheet];
+      } catch (e) {
+        sheet = null;
+      }
+    }
+    if (!sheet) {
+      var style = document.createElement('style');
+      style.textContent = CSS;
+      root.appendChild(style);
+    }
 
     panel = document.createElement('div');
     panel.className = 'tc';

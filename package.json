@@ -1,6 +1,6 @@
 {
   "name": "tomlabs-consent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cookie consent banner and Google Analytics 4 loader (Consent Mode v2, basic mode) for TomLabs web apps.",
   "license": "MIT",
   "author": "Tomáš Bouda",

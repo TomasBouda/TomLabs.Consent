@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 — 2026-09-24
+
+- Fixed: the banner is styled on sites with a strict Content-Security-Policy (`style-src 'self'`); it now uses a constructed stylesheet instead of a `<style>` element.
+- Docs: the CSP sources Google Analytics needs.
+
 ## 1.0.0 — 2026-09-24
 
 - Added: consent banner with Accept / Decline, Czech and English texts, a privacy link and reopen links (`data-tomlabs-consent`).

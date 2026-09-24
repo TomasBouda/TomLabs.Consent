@@ -59,6 +59,17 @@ JavaScript API: `tomlabsConsent.open()`, `.get()` (`'granted'`, `'denied'` or `n
 
 The value comes from the pipeline (`GA_MEASUREMENT_ID`), never from the source.
 
+## Content-Security-Policy
+
+The script itself needs nothing beyond `script-src 'self'` (styles use a constructed stylesheet, which `style-src`
+does not restrict). Google Analytics, once accepted, needs:
+
+```
+script-src  'self' https://*.googletagmanager.com
+connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com
+img-src     'self' https://*.google-analytics.com https://*.googletagmanager.com
+```
+
 ## Keeping copies in sync
 
 Each app has its own copy (no shared host, no runtime dependency, no CSP exception).
